@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import data from "../../public/data.json";
 import BookCard from "@/components/BookCard";
 import Modal from "@/components/Modal";
@@ -8,6 +9,16 @@ import BookForm from "@/components/BookForm";
 import BookDetailSheet from "@/components/BookDetailSheet";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Book } from "@/types/book";
 import { Library, Plus } from "lucide-react";
 
@@ -15,6 +26,17 @@ export default function Page() {
   const [books, setBooks] = useState<Book[]>(data as Book[]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [detailBook, setDetailBook] = useState<Book | undefined>(undefined);
+  const [bookPendingDelete, setBookPendingDelete] = useState<
+    Book | undefined
+  >(undefined);
+  // Freeze the last non-undefined book so the AlertDialog's title doesn't
+  // blank out during its closing animation.
+  const [displayPendingDelete, setDisplayPendingDelete] = useState<
+    Book | undefined
+  >(undefined);
+  useEffect(() => {
+    if (bookPendingDelete) setDisplayPendingDelete(bookPendingDelete);
+  }, [bookPendingDelete]);
 
   const handleAddBook = (newBook: Partial<Book>) => {
     const book: Book = {
@@ -33,10 +55,16 @@ export default function Page() {
   };
 
   const handleDeleteBook = (id: number) => {
-    if (confirm("Are you sure you want to delete this book?")) {
-      setBooks(books.filter((book) => book.id !== id));
-      setDetailBook(undefined);
-    }
+    const book = books.find((b) => b.id === id);
+    if (book) setBookPendingDelete(book);
+  };
+
+  const confirmDelete = () => {
+    if (!bookPendingDelete) return;
+    setBooks(books.filter((book) => book.id !== bookPendingDelete.id));
+    setDetailBook(undefined);
+    setBookPendingDelete(undefined);
+    toast.success(`"${bookPendingDelete.title}" deleted`);
   };
 
   return (
@@ -84,6 +112,29 @@ export default function Page() {
           onCancel={() => setIsAddModalOpen(false)}
         />
       </Modal>
+
+      <AlertDialog
+        open={!!bookPendingDelete}
+        onOpenChange={(open) => !open && setBookPendingDelete(undefined)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Delete &ldquo;{displayPendingDelete?.title}&rdquo;?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This removes the book from your collection. This can&apos;t be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }
