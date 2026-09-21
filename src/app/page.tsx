@@ -41,7 +41,7 @@ export default function Page() {
   const handleAddBook = (newBook: Partial<Book>) => {
     const book: Book = {
       ...(newBook as Book),
-      id: Math.max(...books.map((b) => b.id)) + 1,
+      id: books.length > 0 ? Math.max(...books.map((b) => b.id)) + 1 : 1,
     };
     setBooks([...books, book]);
     setIsAddModalOpen(false);
