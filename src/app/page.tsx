@@ -12,8 +12,7 @@ import { Library, Plus } from "lucide-react";
 
 export default function Page() {
   const [books, setBooks] = useState<Book[]>(data as Book[]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<Book | undefined>(undefined);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [detailBook, setDetailBook] = useState<Book | undefined>(undefined);
 
   const handleAddBook = (newBook: Partial<Book>) => {
@@ -22,17 +21,14 @@ export default function Page() {
       id: Math.max(...books.map((b) => b.id)) + 1,
     };
     setBooks([...books, book]);
-    setIsModalOpen(false);
+    setIsAddModalOpen(false);
   };
 
   const handleUpdateBook = (updatedBook: Partial<Book>) => {
-    setBooks(
-      books.map((book) =>
-        book.id === selectedBook?.id ? { ...book, ...updatedBook } : book
-      )
-    );
-    setIsModalOpen(false);
-    setSelectedBook(undefined);
+    if (!detailBook) return;
+    const merged = { ...detailBook, ...updatedBook };
+    setBooks(books.map((book) => (book.id === detailBook.id ? merged : book)));
+    setDetailBook(merged);
   };
 
   const handleDeleteBook = (id: number) => {
@@ -40,16 +36,6 @@ export default function Page() {
       setBooks(books.filter((book) => book.id !== id));
       setDetailBook(undefined);
     }
-  };
-
-  const handleEdit = (book: Book) => {
-    setSelectedBook(book);
-    setIsModalOpen(true);
-  };
-
-  const handleEditFromDetail = (book: Book) => {
-    setDetailBook(undefined);
-    handleEdit(book);
   };
 
   return (
@@ -65,13 +51,7 @@ export default function Page() {
             collection
           </p>
         </div>
-        <Button
-          size="lg"
-          onClick={() => {
-            setSelectedBook(undefined);
-            setIsModalOpen(true);
-          }}
-        >
+        <Button size="lg" onClick={() => setIsAddModalOpen(true)}>
           <Plus data-icon="inline-start" className="size-4" />
           Add New Book
         </Button>
@@ -86,25 +66,18 @@ export default function Page() {
       <BookDetailSheet
         book={detailBook}
         onOpenChange={(open) => !open && setDetailBook(undefined)}
-        onEdit={handleEditFromDetail}
+        onUpdate={handleUpdateBook}
         onDelete={handleDeleteBook}
       />
 
       <Modal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedBook(undefined);
-        }}
-        title={selectedBook ? "Edit Book" : "Add New Book"}
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        title="Add New Book"
       >
         <BookForm
-          book={selectedBook}
-          onSubmit={selectedBook ? handleUpdateBook : handleAddBook}
-          onCancel={() => {
-            setIsModalOpen(false);
-            setSelectedBook(undefined);
-          }}
+          onSubmit={handleAddBook}
+          onCancel={() => setIsAddModalOpen(false)}
         />
       </Modal>
     </main>
