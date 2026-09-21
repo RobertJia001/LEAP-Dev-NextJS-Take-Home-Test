@@ -23,6 +23,20 @@ source (built on Base UI's accessible, unstyled primitives) directly into
 - It's the current de-facto standard for Next.js + Tailwind projects, so the resulting
   code should look familiar to most reviewers.
 
+Beyond swapping components in, this pass also reworked the gallery's information
+architecture, checked against how real bookstores (Bookshop.org, Barnes & Noble, Amazon)
+lay out a book-listing grid:
+- Each card now shows only what's needed to scan quickly — cover, title, author, and
+  price as a colored tag — and drops the description, matching every site checked. The
+  cover image is also shown uncropped (`object-fit: contain`) instead of the original
+  fill-crop, so no part of the artwork is cut off.
+- Clicking a card opens a side panel with every field the data actually has, including
+  several that had no UI at all before (genres, publisher, publication date, ISBN,
+  pages, stock). Edit and Delete moved off the card and into that panel, so the grid
+  itself stays uncluttered.
+- Editing happens inline, field-by-field, inside that same panel rather than jumping to
+  a separate popup.
+
 2. Implement dark mode that includes a switcher to go back to light mode.
 
 3. Deleting a book displays a JavaScript alert. Replace this with modern UX.
