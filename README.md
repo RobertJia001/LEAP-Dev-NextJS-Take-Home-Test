@@ -20,6 +20,11 @@ Please implement the following:
 
 5. There is a bug in the code. Find it and fix it.
 
-[Explain here what the bug was and how you fixed it]
+The bug was in `handleUpdateBook` in `src/app/page.tsx`. When saving an edit, the updated
+book was merged as `{ ...updatedBook, ...book }` — spreading the *stale* original book
+object last, so its old field values always overwrote the incoming edits. In effect,
+saving a change in the edit form had no visible effect: the book reverted to its
+pre-edit state every time. The fix swaps the spread order to `{ ...book, ...updatedBook }`,
+so the edited fields are applied on top of (and correctly override) the original book.
 
 Good luck and have fun!
