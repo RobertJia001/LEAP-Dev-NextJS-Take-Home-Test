@@ -3,6 +3,7 @@ import { Book } from "@/types/book";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/lib/format";
 
 interface BookCardProps {
   book: Book;
@@ -25,7 +26,7 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
         <h3 className="text-lg font-semibold">{book.title}</h3>
         <p className="mb-2 text-muted-foreground">{book.author}</p>
         <Badge className="h-auto border-transparent bg-green-600/10 px-2.5 py-1 text-sm font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
-          {book.currency} {book.price.toFixed(2)}
+          {formatPrice(book.price, book.currency)}
         </Badge>
       </CardContent>
       <CardFooter className="gap-2 border-t-0 bg-transparent pt-0">
