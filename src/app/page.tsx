@@ -6,6 +6,7 @@ import BookCard from "@/components/BookCard";
 import Modal from "@/components/Modal";
 import BookForm from "@/components/BookForm";
 import BookDetailSheet from "@/components/BookDetailSheet";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Book } from "@/types/book";
 import { Library, Plus } from "lucide-react";
@@ -51,10 +52,13 @@ export default function Page() {
             collection
           </p>
         </div>
-        <Button size="lg" onClick={() => setIsAddModalOpen(true)}>
-          <Plus data-icon="inline-start" className="size-4" />
-          Add New Book
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button size="lg" onClick={() => setIsAddModalOpen(true)}>
+            <Plus data-icon="inline-start" className="size-4" />
+            Add New Book
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
