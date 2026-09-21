@@ -5,6 +5,7 @@ import data from "../../public/data.json";
 import BookCard from "@/components/BookCard";
 import Modal from "@/components/Modal";
 import BookForm from "@/components/BookForm";
+import { Button } from "@/components/ui/button";
 import { Book } from "@/types/book";
 
 export default function Page() {
@@ -46,15 +47,14 @@ export default function Page() {
     <main className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Book Gallery</h1>
-        <button
+        <Button
           onClick={() => {
             setSelectedBook(undefined);
             setIsModalOpen(true);
           }}
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
         >
           Add New Book
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

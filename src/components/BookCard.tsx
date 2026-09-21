@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { Book } from "@/types/book";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface BookCardProps {
   book: Book;
@@ -9,7 +11,7 @@ interface BookCardProps {
 
 export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
   return (
-    <div className="relative bg-white rounded-lg shadow-md overflow-hidden">
+    <Card className="gap-0 overflow-hidden pt-0">
       <div className="relative h-[300px] w-full">
         <Image
           src={book.coverImage}
@@ -18,30 +20,22 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
           style={{ objectFit: "cover" }}
         />
       </div>
-      <div className="p-4">
+      <CardContent className="flex flex-col pt-4">
         <h3 className="text-lg font-semibold">{book.title}</h3>
-        <p className="text-gray-600">{book.author}</p>
-        <p className="text-green-600 font-semibold mb-2">
+        <p className="text-muted-foreground">{book.author}</p>
+        <p className="mb-2 font-semibold text-primary">
           {book.currency} {book.price.toFixed(2)}
         </p>
-        <p className="text-gray-700 text-sm line-clamp-3 mb-4">
+        <p className="mb-4 line-clamp-3 text-sm text-muted-foreground">
           {book.description}
         </p>
-        <div className="mt-4 flex gap-2">
-          <button
-            onClick={() => onEdit(book)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => onDelete(book.id)}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+      <CardFooter className="gap-2 border-t-0 bg-transparent pt-0">
+        <Button onClick={() => onEdit(book)}>Edit</Button>
+        <Button variant="destructive" onClick={() => onDelete(book.id)}>
+          Delete
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
