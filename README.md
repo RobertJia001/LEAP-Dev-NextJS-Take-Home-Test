@@ -53,3 +53,11 @@ pre-edit state every time. The fix swaps the spread order to `{ ...book, ...upda
 so the edited fields are applied on top of (and correctly override) the original book.
 
 Good luck and have fun!
+
+---
+
+## Notes for Reviewers
+
+- **Package manager:** this project uses pnpm (see `pnpm-lock.yaml` / `pnpm-workspace.yaml`). Run `pnpm install` rather than `npm install`/`yarn install` to match the locked dependency versions. A fresh `pnpm install` shouldn't prompt for anything — the native build-script approvals for `sharp`/`@tailwindcss/oxide` are already recorded in `pnpm-workspace.yaml`.
+- **Data is in-memory only:** there's no backend, so all CRUD operations (add/edit/delete) only update React state. Refreshing the page resets the book list back to `public/data.json` — that's expected, not a bug.
+- **No lint/test scripts:** none were configured in the original starter, and none were added.
