@@ -7,6 +7,7 @@ import Modal from "@/components/Modal";
 import BookForm from "@/components/BookForm";
 import { Button } from "@/components/ui/button";
 import { Book } from "@/types/book";
+import { Library, Plus } from "lucide-react";
 
 export default function Page() {
   const [books, setBooks] = useState<Book[]>(data as Book[]);
@@ -46,13 +47,24 @@ export default function Page() {
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Book Gallery</h1>
+        <div>
+          <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
+            <Library className="size-7 text-primary" />
+            Book Gallery
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {books.length} {books.length === 1 ? "book" : "books"} in the
+            collection
+          </p>
+        </div>
         <Button
+          size="lg"
           onClick={() => {
             setSelectedBook(undefined);
             setIsModalOpen(true);
           }}
         >
+          <Plus data-icon="inline-start" className="size-4" />
           Add New Book
         </Button>
       </div>

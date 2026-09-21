@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Book } from "@/types/book";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface BookCardProps {
   book: Book;
@@ -22,10 +23,10 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
       </div>
       <CardContent className="flex flex-col pt-4">
         <h3 className="text-lg font-semibold">{book.title}</h3>
-        <p className="text-muted-foreground">{book.author}</p>
-        <p className="mb-2 font-semibold text-primary">
+        <p className="mb-2 text-muted-foreground">{book.author}</p>
+        <Badge className="mb-2 h-auto border-transparent bg-green-600/10 px-2.5 py-1 text-sm font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
           {book.currency} {book.price.toFixed(2)}
-        </p>
+        </Badge>
         <p className="mb-4 line-clamp-3 text-sm text-muted-foreground">
           {book.description}
         </p>
