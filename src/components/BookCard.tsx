@@ -14,7 +14,7 @@ export default function BookCard({ book, onSelect }: BookCardProps) {
     <button
       type="button"
       onClick={() => onSelect(book)}
-      className="block w-full rounded-xl border-0 bg-transparent p-0 text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="block w-full rounded-xl border-0 bg-transparent p-0 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-primary/50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <Card className="overflow-hidden pt-0">
         <div className="relative h-[300px] w-full bg-muted">

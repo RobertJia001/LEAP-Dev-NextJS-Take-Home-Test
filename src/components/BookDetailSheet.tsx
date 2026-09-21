@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { Book } from "@/types/book";
 import {
@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import BookForm from "@/components/BookForm";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { formatPrice, formatDate } from "@/lib/format";
 
 interface BookDetailSheetProps {
@@ -34,6 +36,8 @@ export default function BookDetailSheet({
   // reset back to view mode whenever a (new, or freshly-saved) book comes in.
   const [displayBook, setDisplayBook] = useState(book);
   const [mode, setMode] = useState<"view" | "edit">("view");
+  const [formData, setFormData] = useState<Partial<Book>>({});
+
   useEffect(() => {
     if (book) {
       setDisplayBook(book);
@@ -41,101 +45,237 @@ export default function BookDetailSheet({
     }
   }, [book]);
 
+  const startEditing = () => {
+    if (!displayBook) return;
+    setFormData(displayBook);
+    setMode("edit");
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onUpdate(formData);
+  };
+
+  const editing = mode === "edit";
+
   return (
     <Sheet open={!!book} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="sm:max-w-md">
-        <SheetHeader className="border-b">
-          <SheetTitle>{mode === "edit" ? "Edit Book" : displayBook?.title}</SheetTitle>
-          {mode === "view" && (
-            <SheetDescription>{displayBook?.author}</SheetDescription>
-          )}
-        </SheetHeader>
-
-        <div className="flex-1 space-y-4 overflow-y-auto p-4">
-          {displayBook && mode === "edit" && (
-            <BookForm
-              book={displayBook}
-              onSubmit={onUpdate}
-              onCancel={() => setMode("view")}
-            />
-          )}
-
-          {displayBook && mode === "view" && (
-            <>
-              <div className="relative h-64 w-full bg-muted">
-                <Image
-                  src={displayBook.coverImage}
-                  alt={`Cover of ${displayBook.title}`}
-                  fill
-                  style={{ objectFit: "contain" }}
-                />
+        <form onSubmit={handleSubmit} className="contents">
+          <SheetHeader className="border-b">
+            {editing ? (
+              <div className="space-y-2">
+                <div>
+                  <Label htmlFor="detail-title" className="sr-only">
+                    Title
+                  </Label>
+                  <Input
+                    id="detail-title"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    className="font-heading text-base font-medium"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="detail-author" className="sr-only">
+                    Author
+                  </Label>
+                  <Input
+                    id="detail-author"
+                    value={formData.author}
+                    onChange={(e) =>
+                      setFormData({ ...formData, author: e.target.value })
+                    }
+                    required
+                  />
+                </div>
               </div>
+            ) : (
+              <>
+                <SheetTitle>{displayBook?.title}</SheetTitle>
+                <SheetDescription>{displayBook?.author}</SheetDescription>
+              </>
+            )}
+          </SheetHeader>
 
-              <Badge className="h-auto border-transparent bg-green-600/10 px-2.5 py-1 text-sm font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
-                {formatPrice(displayBook.price, displayBook.currency)}
-              </Badge>
+          <div className="flex-1 space-y-4 overflow-y-auto p-4">
+            {displayBook && (
+              <>
+                <div className="relative h-64 w-full bg-muted">
+                  <Image
+                    src={
+                      (editing ? formData.coverImage : displayBook.coverImage) ||
+                      displayBook.coverImage
+                    }
+                    alt={`Cover of ${displayBook.title}`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </div>
 
-              {displayBook.genres.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {displayBook.genres.map((genre) => (
-                    <Badge key={genre} variant="outline">
-                      {genre}
-                    </Badge>
-                  ))}
-                </div>
-              )}
+                {editing && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="detail-cover">Cover Image URL</Label>
+                    <Input
+                      id="detail-cover"
+                      value={formData.coverImage}
+                      onChange={(e) =>
+                        setFormData({ ...formData, coverImage: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                )}
 
-              <p className="text-sm text-muted-foreground">
-                {displayBook.description}
-              </p>
+                {editing ? (
+                  <div className="flex gap-2">
+                    <div className="w-24 space-y-1.5">
+                      <Label htmlFor="detail-price">Price</Label>
+                      <Input
+                        id="detail-price"
+                        type="number"
+                        step="0.01"
+                        value={formData.price}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            price: parseFloat(e.target.value),
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                    <div className="w-20 space-y-1.5">
+                      <Label htmlFor="detail-currency">Currency</Label>
+                      <Input
+                        id="detail-currency"
+                        value={formData.currency}
+                        onChange={(e) =>
+                          setFormData({ ...formData, currency: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <Badge className="h-auto w-fit border-transparent bg-green-600/10 px-2.5 py-1 text-sm font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
+                    {formatPrice(displayBook.price, displayBook.currency)}
+                  </Badge>
+                )}
 
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                <div>
-                  <dt className="text-muted-foreground">Publisher</dt>
-                  <dd className="font-medium">{displayBook.publisher}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Published</dt>
-                  <dd className="font-medium">
-                    {formatDate(displayBook.publicationDate)}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">ISBN</dt>
-                  <dd className="font-medium">{displayBook.isbn}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Pages</dt>
-                  <dd className="font-medium">{displayBook.pages}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Stock</dt>
-                  <dd className="font-medium">
-                    {displayBook.stock > 0
-                      ? `${displayBook.stock} available`
-                      : "Out of stock"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Rating</dt>
-                  <dd className="font-medium">{displayBook.rating} / 5</dd>
-                </div>
-              </dl>
-            </>
-          )}
-        </div>
+                {displayBook.genres.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {displayBook.genres.map((genre) => (
+                      <Badge key={genre} variant="outline">
+                        {genre}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
 
-        {mode === "view" && (
+                {editing ? (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="detail-description">Description</Label>
+                    <Textarea
+                      id="detail-description"
+                      value={formData.description}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
+                      rows={3}
+                      required
+                    />
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    {displayBook.description}
+                  </p>
+                )}
+
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                  <div>
+                    <dt className="text-muted-foreground">Publisher</dt>
+                    <dd className="font-medium">{displayBook.publisher}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">Published</dt>
+                    <dd className="font-medium">
+                      {formatDate(displayBook.publicationDate)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">ISBN</dt>
+                    {editing ? (
+                      <dd>
+                        <Input
+                          aria-label="ISBN"
+                          value={formData.isbn}
+                          onChange={(e) =>
+                            setFormData({ ...formData, isbn: e.target.value })
+                          }
+                          className="h-7"
+                          required
+                        />
+                      </dd>
+                    ) : (
+                      <dd className="font-medium">{displayBook.isbn}</dd>
+                    )}
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">Pages</dt>
+                    <dd className="font-medium">{displayBook.pages}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">Stock</dt>
+                    <dd className="font-medium">
+                      {displayBook.stock > 0
+                        ? `${displayBook.stock} available`
+                        : "Out of stock"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">Rating</dt>
+                    <dd className="font-medium">{displayBook.rating} / 5</dd>
+                  </div>
+                </dl>
+              </>
+            )}
+          </div>
+
           <SheetFooter className="flex-row justify-end border-t">
-            <Button
-              variant="destructive"
-              onClick={() => displayBook && onDelete(displayBook.id)}
-            >
-              Delete
-            </Button>
-            <Button onClick={() => setMode("edit")}>Edit</Button>
+            {editing ? (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setMode("view")}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => displayBook && onDelete(displayBook.id)}
+                >
+                  Delete
+                </Button>
+                <Button type="button" onClick={startEditing}>
+                  Edit
+                </Button>
+              </>
+            )}
           </SheetFooter>
-        )}
+        </form>
       </SheetContent>
     </Sheet>
   );
