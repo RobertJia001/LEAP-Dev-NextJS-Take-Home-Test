@@ -63,24 +63,20 @@ export default function BookDetailSheet({
         <SheetHeader className="border-b">
           {editing ? (
             <div className="space-y-2">
-              <div>
-                <Label htmlFor="detail-title" className="sr-only">
-                  Title
-                </Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="detail-title">Title</Label>
                 <Input
                   id="detail-title"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="font-heading text-base font-medium"
+                  className="pr-10 font-heading text-base font-medium"
                   required
                 />
               </div>
-              <div>
-                <Label htmlFor="detail-author" className="sr-only">
-                  Author
-                </Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="detail-author">Author</Label>
                 <Input
                   id="detail-author"
                   value={formData.author}
