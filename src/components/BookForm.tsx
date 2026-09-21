@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import StarRating from "@/components/StarRating";
 
 interface BookFormProps {
   book?: Book;
@@ -83,6 +84,16 @@ export default function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
               setFormData({ ...formData, currency: e.target.value })
             }
             required
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>Rating</Label>
+        <div>
+          <StarRating
+            value={formData.rating ?? 0}
+            onChange={(rating) => setFormData({ ...formData, rating })}
           />
         </div>
       </div>

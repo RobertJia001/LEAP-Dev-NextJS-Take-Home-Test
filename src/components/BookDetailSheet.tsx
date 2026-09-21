@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import StarRating from "@/components/StarRating";
 import { formatPrice, formatDate } from "@/lib/format";
 
 interface BookDetailSheetProps {
@@ -235,7 +236,21 @@ export default function BookDetailSheet({
                 </div>
                 <div>
                   <dt className="text-muted-foreground">Rating</dt>
-                  <dd className="font-medium">{displayBook.rating} / 5</dd>
+                  {editing ? (
+                    <dd>
+                      <StarRating
+                        value={formData.rating ?? 0}
+                        onChange={(rating) =>
+                          setFormData({ ...formData, rating })
+                        }
+                      />
+                    </dd>
+                  ) : (
+                    <dd className="flex items-center gap-1.5 font-medium">
+                      <StarRating value={displayBook.rating} readOnly />
+                      <span>{displayBook.rating}</span>
+                    </dd>
+                  )}
                 </div>
               </dl>
             </>

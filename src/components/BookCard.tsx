@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Book } from "@/types/book";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import StarRating from "@/components/StarRating";
 import { formatPrice } from "@/lib/format";
 
 interface BookCardProps {
@@ -27,7 +28,8 @@ export default function BookCard({ book, onSelect }: BookCardProps) {
         </div>
         <CardContent className="flex flex-col">
           <h3 className="text-lg font-semibold">{book.title}</h3>
-          <p className="mb-2 text-muted-foreground">{book.author}</p>
+          <p className="text-muted-foreground">{book.author}</p>
+          <StarRating value={book.rating} readOnly className="mb-2" />
           <Badge className="h-auto w-fit border-transparent bg-green-600/10 px-2.5 py-1 text-sm font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
             {formatPrice(book.price, book.currency)}
           </Badge>
