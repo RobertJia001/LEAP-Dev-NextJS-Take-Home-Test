@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -13,20 +20,19 @@ export default function Modal({
   title,
   children,
 }: ModalProps) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <div
-          className="fixed inset-0 bg-black bg-opacity-25"
-          onClick={onClose}
-        />
-        <div className="relative bg-white rounded-lg p-6 w-full max-w-lg">
-          <h2 className="text-xl font-semibold mb-4">{title}</h2>
-          {children}
-        </div>
-      </div>
-    </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        {children}
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -10,7 +10,32 @@ Please implement the following:
 
 1. Use a component library to make the UI and UX more appealing and user friendly.
 
-[Explain here why you chose the one you did]
+I chose [shadcn/ui](https://ui.shadcn.com). Rather than pulling in a themed component
+package as an opaque `node_modules` dependency, its CLI generates the actual component
+source (built on Base UI's accessible, unstyled primitives) directly into
+`src/components/ui/`, styled with Tailwind classes the project already uses. That means:
+- No separate styling system to reconcile with Tailwind (unlike e.g. Chakra UI or
+  Mantine, which bring their own CSS engines).
+- The components are fully owned and editable — useful for the later tasks, since the
+  same setup directly supplies the `Dialog` used to rebuild the book modal, the
+  `AlertDialog` used for the delete confirmation, and a full set of light/dark theme
+  CSS variables for the dark mode switcher.
+- It's the current de-facto standard for Next.js + Tailwind projects, so the resulting
+  code should look familiar to most reviewers.
+
+Beyond swapping components in, this pass also reworked the gallery's information
+architecture, checked against how real bookstores (Bookshop.org, Barnes & Noble, Amazon)
+lay out a book-listing grid:
+- Each card now shows only what's needed to scan quickly — cover, title, author, and
+  price as a colored tag — and drops the description, matching every site checked. The
+  cover image is also shown uncropped (`object-fit: contain`) instead of the original
+  fill-crop, so no part of the artwork is cut off.
+- Clicking a card opens a side panel with every field the data actually has, including
+  several that had no UI at all before (genres, publisher, publication date, ISBN,
+  pages, stock). Edit and Delete moved off the card and into that panel, so the grid
+  itself stays uncluttered.
+- Editing happens inline, field-by-field, inside that same panel rather than jumping to
+  a separate popup.
 
 2. Implement dark mode that includes a switcher to go back to light mode.
 

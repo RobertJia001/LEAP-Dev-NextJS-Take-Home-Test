@@ -1,47 +1,38 @@
 import Image from "next/image";
 import { Book } from "@/types/book";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/lib/format";
 
 interface BookCardProps {
   book: Book;
-  onEdit: (book: Book) => void;
-  onDelete: (id: number) => void;
+  onSelect: (book: Book) => void;
 }
 
-export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
+export default function BookCard({ book, onSelect }: BookCardProps) {
   return (
-    <div className="relative bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="relative h-[300px] w-full">
-        <Image
-          src={book.coverImage}
-          alt={`Cover of ${book.title}`}
-          fill
-          style={{ objectFit: "cover" }}
-        />
-      </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold">{book.title}</h3>
-        <p className="text-gray-600">{book.author}</p>
-        <p className="text-green-600 font-semibold mb-2">
-          {book.currency} {book.price.toFixed(2)}
-        </p>
-        <p className="text-gray-700 text-sm line-clamp-3 mb-4">
-          {book.description}
-        </p>
-        <div className="mt-4 flex gap-2">
-          <button
-            onClick={() => onEdit(book)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => onDelete(book.id)}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          >
-            Delete
-          </button>
+    <button
+      type="button"
+      onClick={() => onSelect(book)}
+      className="block w-full rounded-xl border-0 bg-transparent p-0 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-primary/50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+    >
+      <Card className="overflow-hidden pt-0">
+        <div className="relative h-[300px] w-full bg-muted">
+          <Image
+            src={book.coverImage}
+            alt={`Cover of ${book.title}`}
+            fill
+            style={{ objectFit: "contain" }}
+          />
         </div>
-      </div>
-    </div>
+        <CardContent className="flex flex-col">
+          <h3 className="text-lg font-semibold">{book.title}</h3>
+          <p className="mb-2 text-muted-foreground">{book.author}</p>
+          <Badge className="h-auto w-fit border-transparent bg-green-600/10 px-2.5 py-1 text-sm font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
+            {formatPrice(book.price, book.currency)}
+          </Badge>
+        </CardContent>
+      </Card>
+    </button>
   );
 }
