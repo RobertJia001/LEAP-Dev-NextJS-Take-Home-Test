@@ -5,6 +5,7 @@ import data from "../../public/data.json";
 import BookCard from "@/components/BookCard";
 import Modal from "@/components/Modal";
 import BookForm from "@/components/BookForm";
+import BookDetailSheet from "@/components/BookDetailSheet";
 import { Button } from "@/components/ui/button";
 import { Book } from "@/types/book";
 import { Library, Plus } from "lucide-react";
@@ -13,6 +14,7 @@ export default function Page() {
   const [books, setBooks] = useState<Book[]>(data as Book[]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | undefined>(undefined);
+  const [detailBook, setDetailBook] = useState<Book | undefined>(undefined);
 
   const handleAddBook = (newBook: Partial<Book>) => {
     const book: Book = {
@@ -36,12 +38,18 @@ export default function Page() {
   const handleDeleteBook = (id: number) => {
     if (confirm("Are you sure you want to delete this book?")) {
       setBooks(books.filter((book) => book.id !== id));
+      setDetailBook(undefined);
     }
   };
 
   const handleEdit = (book: Book) => {
     setSelectedBook(book);
     setIsModalOpen(true);
+  };
+
+  const handleEditFromDetail = (book: Book) => {
+    setDetailBook(undefined);
+    handleEdit(book);
   };
 
   return (
@@ -71,14 +79,16 @@ export default function Page() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {books.map((book) => (
-          <BookCard
-            key={book.id}
-            book={book}
-            onEdit={handleEdit}
-            onDelete={handleDeleteBook}
-          />
+          <BookCard key={book.id} book={book} onSelect={setDetailBook} />
         ))}
       </div>
+
+      <BookDetailSheet
+        book={detailBook}
+        onOpenChange={(open) => !open && setDetailBook(undefined)}
+        onEdit={handleEditFromDetail}
+        onDelete={handleDeleteBook}
+      />
 
       <Modal
         isOpen={isModalOpen}
