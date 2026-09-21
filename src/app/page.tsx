@@ -24,7 +24,7 @@ export default function Page() {
   const handleUpdateBook = (updatedBook: Partial<Book>) => {
     setBooks(
       books.map((book) =>
-        book.id === selectedBook?.id ? { ...updatedBook, ...book } : book
+        book.id === selectedBook?.id ? { ...book, ...updatedBook } : book
       )
     );
     setIsModalOpen(false);
